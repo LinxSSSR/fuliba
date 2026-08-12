@@ -5,8 +5,12 @@
 ================================
 基于 wnflb_checkin 改造，专为青龙面板（qinglong）设计。
 
-青龙面板任务配置示例（定时规则在面板中设置即可，无需写在脚本里）：
-  task wnflb_checkin_ql.py
+青龙面板订阅后自动创建定时任务，无需手动配置：
+  ql repo https://github.com/LinxSSSR/fuliba.git "" "wnflb_checkin_ql.py"
+
+new Env('福利吧论坛签到')
+cron: 0 9,22 * * *
+"""
 
 环境变量（在青龙面板「环境变量」页面添加）：
   FORUM_USERNAME   论坛账号
