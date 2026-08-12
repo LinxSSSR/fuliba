@@ -4,10 +4,9 @@
 
 ## 功能
 
-- 支持**账号密码自动登录**（含 ddddocr 验证码识别）
-- 支持**Cookie 直传**（兼容旧方式）
-- Cookie 自动缓存复用，过期自动重新登录
+- **纯 Cookie 签到**，无需账号密码、无需验证码识别（ddddocr）
 - 使用青龙内置 `notify.py` 推送通知
+- 依赖极简，仅 `requests`，Alpine 环境可直接安装
 
 ## 青龙面板部署（订阅方式，推荐）
 
@@ -30,21 +29,19 @@
 
 ```
 requests
-ddddocr
-Pillow
 ```
 
-### 3. 配置环境变量
+### 3. 获取 Cookie 并配置环境变量
 
-青龙面板「环境变量」添加：
+1. 电脑浏览器登录 `https://www.wnflb2023.com/`（确保已登录）
+2. 按 `F12` → `Application`（或「存储」）→ `Cookies` → 选该域名
+3. 把所有 cookie 复制成一行字符串，形如 `xxx=aaa; yyy=bbb; zzz=ccc`
+4. 青龙面板「环境变量」新建：
 
 | 变量名 | 必填 | 说明 |
 |--------|------|------|
-| `FORUM_USERNAME` | 是* | 论坛账号 |
-| `FORUM_PASSWORD` | 是* | 论坛密码 |
-| `FORUM_COOKIE` | 否 | Cookie 字符串（优先级更高） |
-
-> \* 二选一即可
+| `FORUM_COOKIE` | 是 | 上面复制的 Cookie 字符串 |
+| `COOKIE_FILE` | 否 | Cookie 文件路径（与 FORUM_COOKIE 二选一） |
 
 ### 4. 运行订阅
 
@@ -78,6 +75,14 @@ Pillow
 | 凌晨一次性 | `0 1 * * *` | 每天凌晨 1 点 |
 
 > 签到是幂等的（已签过不会重复），多设几次无害，早晚各一次通常足够。
+
+## 常见问题
+
+**Q: 为什么不用账号密码登录、不装 ddddocr？**
+A: 账号密码登录需要 `ddddocr` 识别验证码，而 `ddddocr` 依赖的 `onnxruntime` 官方**不提供 Alpine（musl）的 wheel**，在青龙默认容器里装不上。纯 Cookie 方式彻底绕开这个问题，依赖也只剩 `requests`。
+
+**Q: Cookie 会过期吗？**
+A: 会，一般几个月。过期后脚本会报「Cookie 已失效」，重新从浏览器复制一次最新 Cookie 即可。
 
 ---
 
